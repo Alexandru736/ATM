@@ -91,6 +91,7 @@ int main()
 				Card_aux = CitireDate_Card(in); //citirea datelor cardului de la tastatura
 				int poz = CalcularePozitie(Card_aux->info2.card_number, numar_max_carduri);
 				InserareCard(&listaCarduri, Card_aux->info2, poz);
+				localizare_elemente[poz]++;
 				nr_curent_carduri++;
 
 		}

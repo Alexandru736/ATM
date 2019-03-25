@@ -216,43 +216,51 @@ int InserareLC(TLC *listaCarduri)
 
 int Afisare(TLC listaCarduri, int nr_max_carduri, FILE *out, int localizare_elemente[nr_max_carduri], int nr_curent_elemente)
 {
-	int i, j, k = 0;
+	int i, j, k = 50, ok = 0;
 
 	printf("nr curent de carduri: %d\n", nr_curent_elemente);
 	if(nr_curent_elemente != 0)
 	{
 
 		for(i = 0; i < nr_max_carduri; i++)
+        {
+
 			if(localizare_elemente[i] != 0)
 			{
 			  printf("yyyyyyyy\n");
 				k = i;
 			}
+        }
 	}
 	else
 	{
 	    printf("nu am ce sa afisez\n");
 		return 0;
 	}
-
-    printf("am gasit element %d\n", k);
-  printf("xxxxxxxx\n");
+    if(k == 0 && nr_curent_elemente == 1)
+    {
+        AfisareCard(listaCarduri->info, nr_max_carduri, out);
+        return 1;
+    }
+    else
+    {
+    printf("am gasit element pe pozitia: %d\n", k);
 	for(i = 0; i <= k; i++, listaCarduri = listaCarduri->urm)
 	{
 	  printf("am intrat in for\n");
-		if(listaCarduri != NULL)
+		if(listaCarduri->info)
 		{
-		  printf("for''\n");
+            printf("for''\n");
 
-			TCard card =  listaCarduri->info; // lista carduri dintr-un LSC
-			if(card == NULL)
-        printf("ttt\n");
+            TCard card =  listaCarduri->info; // lista carduri dintr-un LSC
+			if(!card)
+                printf("ttt\n");
 			int poz = CalcularePozitie(card->info2.card_number, nr_max_carduri);
 			printf("ccc\n");
 			for(; card != NULL; card = card->urm2)
 			{
-			  printf("for 2\n");
-				fprintf(out, "poz%d:[", poz);
+                printf("for 2\n");
+                fprintf(out, "poz%d: [\n", poz);
 				fprintf(out, "(card_number: ");
 				for(j = 0; j < 16; j++)
 				{
@@ -263,41 +271,44 @@ int Afisare(TLC listaCarduri, int nr_max_carduri, FILE *out, int localizare_elem
 				}
 				fprintf(out, ", PIN: ");
 				for(j = 0; j < 4; j++)
-				{
 					if(card->info2.pin[j] == 0x0c || card->info2.pin[j] == 0x01)
 						break;
 					else
 						fprintf(out, "%c", card->info2.pin[j]);
 
-        fprintf(out, ", expiry date: ");
+                fprintf(out, ", expiry date: ");
 
-        for(j = 0; j < 2; j++)
-          if(card->info2.expiry_date.month[j] == 0x0c || card->info2.expiry_date.month[j] == 0x01)
-            break;
-          else
-            fprintf(out, "%c", card->info2.expiry_date.month[j]);
-        fprintf(out, "/");
+                for(j = 0; j < 2; j++)
+                    if(card->info2.expiry_date.month[j] == 0x0c || card->info2.expiry_date.month[j] == 0x01)
+                        break;
+                    else
+                        fprintf(out, "%c", card->info2.expiry_date.month[j]);
+                    fprintf(out, "/");
 
-        for(j = 0; j < 2; j++)
-          if(card->info2.expiry_date.year[j] == 0x0c || card->info2.expiry_date.year[j] == 0x01)
-            break;
-          else
-            fprintf(out, "%c", card->info2.expiry_date.year[j]);
-        fprintf(out, ", CVV: %d, balance: %d, status: %s, history: [",
-        card->info2.CVV, card->info2.balance, card->info2.status);
+                for(j = 0; j < 2; j++)
+                    if(card->info2.expiry_date.year[j] == 0x0c || card->info2.expiry_date.year[j] == 0x01)
+                        break;
+                    else
+                        fprintf(out, "%c", card->info2.expiry_date.year[j]);
+                fprintf(out, ", CVV: %d, balance: %d, status: %s, history: [",
+                card->info2.CVV, card->info2.balance, card->info2.status);
 
 				//THistory istoric = card->info2.history;
 
-				fprintf(out, "])\n");
-				fprintf(out, "]");
-                }
+                fprintf(out, "])\n");
+                fprintf(out, "]");
+                printf("am afisat un card\n");
 
-		}
+            }
 
-	}
-		printf("am terminat de afisat\n");
-
+        }
+        else if(!listaCarduri->info)
+        {
+            fprintf(out, "poz%d: []\n", i);
+            printf("am terminat de afisat null\n");
+        }
 	}
 	printf("am terminat de afisat\n");
 	return 1;
+    }
 }
